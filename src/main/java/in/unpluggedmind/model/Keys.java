@@ -1,5 +1,8 @@
 package in.unpluggedmind.model;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Keys {
 	private String ZMK_CLR;
 	private String ZMK_LMK;

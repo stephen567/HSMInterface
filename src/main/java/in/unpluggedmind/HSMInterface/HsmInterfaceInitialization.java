@@ -22,7 +22,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import in.unpluggedmind.CryptValues;
+import in.unpluggedmind.KeyTypes;
+import in.unpluggedmind.commands.CmdGenKey;
 import in.unpluggedmind.commands.CmdGenValue;
+import in.unpluggedmind.commands.CmdVerification;
 import in.unpluggedmind.model.Keys;
 
 @Component
@@ -50,7 +53,7 @@ public class HsmInterfaceInitialization {
 	private final String CVK_LMK = "CVK_LMK";
 	
 	public void init() throws InvalidKeyException, UnknownHostException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, InvalidAlgorithmParameterException, IOException, SMException {
-		System.out.println("HSM Interface "+ getClass().getName() +" Initialization");
+		System.out.println("HSM Interface "+ getClass().getName() +" Initializing...");
 		getKeys(keys);
 		process();	
 	}
@@ -94,29 +97,37 @@ public class HsmInterfaceInitialization {
 			in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 			out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			
-			/* ************************************************************************* */
-			 
-			//iCommand = CmdGenKey.generate(KeyTypes.ZMK, keys);
-			//iCommand = CmdGenKey.generate(KeyTypes.ZPK);
-			//iCommand = CmdGenKey.generate(KeyTypes.ZPKzmk);
-			//iCommand = CmdGenKey.generate(KeyTypes.PVK);
-			//iCommand = CmdGenKey.generate(KeyTypes.PVKzmk);
-			//iCommand = CmdGenKey.generate(KeyTypes.CVK);
+			/* ************************************************************************ * 
+			 * UNCOMMENT ONE OF THE FOLLOWING OPERATION
+			 * ENSURE RIGHT KEYS in KEYS.PROPERTIES 
+			 * EXECUTE
+			 * REVIEW LOGS FOR HSM RESPONSE 
+			 * ************************************************************************ */ 
 			
+			// To Generate Keys
+			iCommand = CmdGenKey.generate(KeyTypes.ZMK, keys);
+			//iCommand = CmdGenKey.generate(KeyTypes.ZPK, keys);
+			//iCommand = CmdGenKey.generate(KeyTypes.ZPKzmk, keys);
+			//iCommand = CmdGenKey.generate(KeyTypes.PVK, keys);
+			//iCommand = CmdGenKey.generate(KeyTypes.PVKzmk, keys);
+			//iCommand = CmdGenKey.generate(KeyTypes.CVK, keys);
+			
+			// To Generate Crypto Values
 			//iCommand = CmdGenValue.calculate(CryptValues.CVV, keys);
 			//iCommand = CmdGenValue.calculate(CryptValues.PVV, keys);
-			iCommand = CmdGenValue.calculate(CryptValues.PINBlock, keys);
+			//iCommand = CmdGenValue.calculate(CryptValues.PINBlock, keys);
 			//iCommand = CmdGenValue.calculate(CryptValues.TranPINLMK, keys);
 			//iCommand = CmdGenValue.calculate(CryptValues.EncPINLMK, keys);
 			//iCommand = CmdGenValue.calculate(CryptValues.PVVLMK, keys);
 			//iCommand = CmdGenValue.calculate(CryptValues.PVVCust, keys);
 			
+			// To Perform Cryptographic Verifications
 			//iCommand = CmdVerification.verify("CVV");
 			//iCommand = CmdVerification.verify("PVV");
 			//iCommand = CmdVerification.verify("CHAIN");
 			/* ************************************************************************* */
 
-			header = "0000"; //Thales Simulator
+			header = "0000"; //Required for Thales Simulator
 			if (iCommand != null) {
 				command = header + iCommand;	
 			}else {
@@ -132,7 +143,7 @@ public class HsmInterfaceInitialization {
 			System.out.println("");
 			
 		}
-		
+		socket.close();
 
 	}
 

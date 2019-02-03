@@ -18,14 +18,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan
+@ComponentScan("in.unpluggedmind")
 public class HsmInterfaceApplication {
 	
 	private static ApplicationContext context;
 
 	public static void main(String[] args) throws InvalidKeyException, UnknownHostException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, InvalidAlgorithmParameterException, IOException, SMException {
 		context = SpringApplication.run(HsmInterfaceApplication.class, args);
-		System.out.println("HSM Interface Initializing...");
+		System.out.println("HSM Interface Initialization");
 		HsmInterfaceInitialization hsmInit = context.getBean(HsmInterfaceInitialization.class);
 		hsmInit.init();
 	}
